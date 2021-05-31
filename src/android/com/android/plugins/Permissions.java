@@ -76,11 +76,13 @@ public class Permissions extends CordovaPlugin {
             boolean hasAllPermissions = hasAllPermissions(permissions);
             addProperty(returnObj, KEY_RESULT_PERMISSION, hasAllPermissions);
 
-            JSONObject returnSubObj = new JSONObject();
-            for (int i = 0; i < permissions.length; i++) {
-                addProperty(returnSubObj, permissions[i], ActivityCompat.shouldShowRequestPermissionRationale(cordova.getActivity(), permissions[i]));
+            if (!hasAllPermissions) {
+                JSONObject returnSubObj = new JSONObject();
+                for (int i = 0; i < permissions.length; i++) {
+                    addProperty(returnSubObj, permissions[i], ActivityCompat.shouldShowRequestPermissionRationale(cordova.getActivity(), permissions[i]));
+                }
+                addProperty(returnObj, KEY_RESULT_SHOW_RATIONALE, returnSubObj);
             }
-            addProperty(returnObj, KEY_RESULT_SHOW_RATIONALE, returnSubObj);
             permissionsCallback.success(returnObj);
         } else {
             addProperty(returnObj, KEY_ERROR, ACTION_REQUEST_PERMISSION);
