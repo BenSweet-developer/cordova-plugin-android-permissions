@@ -31,6 +31,7 @@ public class Permissions extends CordovaPlugin {
     private static final String KEY_ERROR = "error";
     private static final String KEY_MESSAGE = "message";
     private static final String KEY_RESULT_PERMISSION = "hasPermission";
+    private static final String KEY_RESULT_SHOW_RATIONALE = "showRationale";
 
     private CallbackContext permissionsCallback;
 
@@ -74,6 +75,12 @@ public class Permissions extends CordovaPlugin {
             //Call checkPermission again to verify
             boolean hasAllPermissions = hasAllPermissions(permissions);
             addProperty(returnObj, KEY_RESULT_PERMISSION, hasAllPermissions);
+
+            JSONObject returnSubObj = new JSONObject();
+            for (int i = 0; i < permissions.length; i++) {
+                addProperty(returnSubObj, permissions[i], ActivityCompat.shouldShowRequestPermissionRationale(cordova.getActivity(), permissions[i]));
+            }
+            addProperty(returnObj, KEY_RESULT_SHOW_RATIONALE, returnSubObj);
             permissionsCallback.success(returnObj);
         } else {
             addProperty(returnObj, KEY_ERROR, ACTION_REQUEST_PERMISSION);
